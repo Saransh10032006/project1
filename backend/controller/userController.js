@@ -30,7 +30,7 @@ const registerUser  =asyncHandler ( async (req, res) => {
             token:generateToken(user._id),
         });
     }else{
-        registerUser.status(400);
+        res.status(400);
         throw new Error("Error Occured");
     }
 });

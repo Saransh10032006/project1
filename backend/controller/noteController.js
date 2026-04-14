@@ -27,7 +27,7 @@ const createNote = expressAsyncHandler(async(req,res)=>{
 const getNoteById = expressAsyncHandler(async (req,res) =>{
     const note = await Note.findById(req.params.id);
 
-    if(note){
+    if(note && note.user.toString() === req.user._id.toString()){
         res.json(note);
     }else {
         res.status(404).json({message: "Note not found"});
@@ -39,6 +39,11 @@ const UpdateNote = expressAsyncHandler(async(req,res)=>{
     const{ title,content,category} = req.body;
 
     const note = await Note.findById(req.params.id);
+
+    if (!note) {
+        res.status(404);
+        throw new Error("Note not found");
+    }
 
     if(note.user.toString() !== req.user._id.toString()){
         res.status(401);
@@ -60,6 +65,11 @@ const UpdateNote = expressAsyncHandler(async(req,res)=>{
 
 const DeleteNote = expressAsyncHandler(async(req,res)=>{
     const note = await Note.findById(req.params.id);
+
+    if (!note) {
+        res.status(404);
+        throw new Error("Note not found");
+    }
 
     if(note.user.toString() !== req.user._id.toString()){
         res.status(401);

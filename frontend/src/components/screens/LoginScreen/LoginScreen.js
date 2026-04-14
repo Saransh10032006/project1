@@ -1,7 +1,6 @@
 import { Button, Col, Form, Row } from "react-bootstrap"
 import MainScreen from "../../MainScreen"
-import { Link } from "react-router-dom"
-import './LoginScreen.css'
+import { Link, useNavigate } from "react-router-dom"
 
 import { useEffect, useState } from "react"
 import axios from 'axios';
@@ -14,7 +13,14 @@ const LoginScreen = () => {
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
 
-    
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const userInfo = localStorage.getItem("userInfo");
+        if (userInfo) {
+            navigate("/dashboard");
+        }
+    }, [navigate]);
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -39,8 +45,9 @@ const LoginScreen = () => {
             console.log(data);
             localStorage.setItem('userInfo', JSON.stringify(data))
             setLoading(false);
+            navigate("/dashboard");
         }catch(error){
-            setError(error.response.data.message);
+            setError(error.response && error.response.data.message ? error.response.data.message : error.message);
             setLoading(false);
         }
     }

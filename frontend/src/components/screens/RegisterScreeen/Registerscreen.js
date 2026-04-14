@@ -1,7 +1,7 @@
 import { Button, Col, Form, Row } from "react-bootstrap";
 import MainScreen from "../../MainScreen";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import ErrorMessage from "../../ErrorMessage";
 import axios from "axios";
 import Loading from "../../Loading";
@@ -18,6 +18,15 @@ const Registerscreen = () => {
   const [picMessage, setPicMessage] = useState(null);
   const [error,setError] = useState(false);
   const [loading,setloading] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userInfo = localStorage.getItem("userInfo");
+    if (userInfo) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -44,8 +53,10 @@ const Registerscreen = () => {
 
         setloading(false);
         localStorage.setItem("userInfo", JSON.stringify(data));
+        navigate("/dashboard");
       }catch(error){
-        setError(error.response.data.message)
+        setError(error.response && error.response.data.message ? error.response.data.message : error.message);
+        setloading(false);
       }
 
     }
